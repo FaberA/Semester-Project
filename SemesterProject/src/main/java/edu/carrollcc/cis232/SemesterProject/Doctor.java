@@ -19,7 +19,6 @@ public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
 		EMERGENCY, CARDIOLOGIST, PEDIATRICIAN, SURGEON, ONCOLOGIST;
 	} 
 	
-	
 	private IntegerProperty doctorID;
 	public int getDoctorID(){
 		return IDProperty().get();
@@ -88,32 +87,10 @@ public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
 	private Doctor(int doctorID, String doctorName, String specialty, String shift){
 		this.doctorID = new SimpleIntegerProperty(doctorID);
 		this.doctorName = new SimpleStringProperty(doctorName);
-
-		try {
-			if(verifySpecialty(specialty) == true){
-				this.specialty = new SimpleStringProperty(specialty);
-			}
-		} 
-		catch (InvalidSpecialtyException e) {//REQ#11 catch at least one exception and handle it
-			
-		}
-		
+		this.specialty = new SimpleStringProperty(specialty);
 		this.shift = new SimpleStringProperty(shift);
 	}
-	
-	public boolean verifySpecialty (String in) throws InvalidSpecialtyException{
-		String trimmed = in.trim();
-		for (Specialty s: Specialty.values()){
-			if(trimmed.equalsIgnoreCase(s.name())){
-				return true;
-			}
-		}
-		throw new InvalidSpecialtyException(trimmed);
-	}
 		
-		
-	
-	
 	public List<Doctor> getDoctors(){ //REQ # 8 use sql db to retrieve data
 		final String URL = "jdbc:derby:Doctor";
     	Connection conn;
@@ -144,6 +121,4 @@ public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
     	super.setDoctors(ll);
 		return ll;
 	}
-	
-	
 }

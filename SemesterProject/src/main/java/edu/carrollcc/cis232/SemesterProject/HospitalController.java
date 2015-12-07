@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import edu.carrollcc.cis232.SemesterProject.Doctor.Specialty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -34,7 +36,7 @@ public class HospitalController implements Initializable {
 	@FXML 
 	private TableColumn<Patient,String> ailment;
 	@FXML 
-	private TableColumn<Patient,String> building;
+	private TableColumn<Patient,Integer> age;
 	@FXML 
 	private TableColumn<Patient,String> patientName;
 	@FXML 
@@ -69,6 +71,8 @@ public class HospitalController implements Initializable {
 	@FXML
 	private TextField newPatAilment;
 	@FXML
+	private TextField newPatAge;
+	@FXML
 	private RadioButton inButton;
 	@FXML
 	private RadioButton outButton;
@@ -87,35 +91,25 @@ public class HospitalController implements Initializable {
 			patientName.setCellFactory(                
 				TextFieldTableCell.<Patient>forTableColumn());
 			
+			age.setCellValueFactory(
+				new PropertyValueFactory<Patient,Integer>("age"));
 			
 			ailment.setCellValueFactory(
 				new PropertyValueFactory<Patient,String>("ailment")); 
 			ailment.setCellFactory(                
 				TextFieldTableCell.<Patient>forTableColumn());
 			
-			  
-			building.setCellValueFactory(
-				new PropertyValueFactory<Patient,String>("building"));
-			building.setCellFactory(                
-				TextFieldTableCell.<Patient>forTableColumn());
-			
-			
-			
+
 			doctorID.setCellValueFactory(
 				new PropertyValueFactory<Doctor,Integer>("doctorID"));
-				
 			doctorName.setCellValueFactory(                
 				new PropertyValueFactory<Doctor,String>("doctorName"));
 			doctorName.setCellFactory(                
 				TextFieldTableCell.<Doctor>forTableColumn());
-			
-				
 			specialty.setCellValueFactory(
 				new PropertyValueFactory<Doctor,String>("specialty")); 
 			specialty.setCellFactory(                
 				TextFieldTableCell.<Doctor>forTableColumn());
-			
-				  
 			shift.setCellValueFactory(
 				new PropertyValueFactory<Doctor,String>("shift"));
 			shift.setCellFactory(                
@@ -134,6 +128,18 @@ public class HospitalController implements Initializable {
             	final String DB_URL = "jdbc:derby:Doctor";
             	Connection conn;
         		PreparedStatement stmt;
+        		
+        		if(!newDocShift.getText().equalsIgnoreCase("Day") || newDocShift.getText().equalsIgnoreCase("Night")){
+        			System.out.println("Invalid shift! Enter Day or Night!");
+        			return;
+        		}
+        		
+        		try {
+					verifySpecialty(newDocSpecialty.getText());
+				} 
+        		catch (InvalidSpecialtyException e) {//REQ#11 catch exception and handle it
+        			return;
+				}
         		try {
         			conn = DriverManager.getConnection(DB_URL);
         			
@@ -167,14 +173,16 @@ public class HospitalController implements Initializable {
             	final String DB_URL = "jdbc:derby:Patient";
             	Connection conn;
         		PreparedStatement stmt;
+        		
         		try {
         			conn = DriverManager.getConnection(DB_URL);
         			
-        			String getNewPatient = "INSERT INTO Patients (patientID, patientName, ailment) VALUES (?,?,?)";
+        			String getNewPatient = "INSERT INTO Patients (patientID, patientName, age, ailment) VALUES (?,?,?,?)";
         			stmt = conn.prepareStatement(getNewPatient);
         			stmt.setInt(1, Integer.parseInt(newPatID.getText()));
-        			stmt.setString(2, newPatName.getText());	
-        			stmt.setString(3, newPatAilment.getText());		                 
+        			stmt.setString(2, newPatName.getText());
+        			stmt.setInt(3, Integer.parseInt(newPatAge.getText()));
+        			stmt.setString(4, newPatAilment.getText());		                 
         			stmt.execute();
         			
         		}
@@ -186,6 +194,7 @@ public class HospitalController implements Initializable {
         		}
                 newPatID.clear();
                 newPatName.clear();
+                newPatAge.clear();
                 newPatAilment.clear();
                 Patient p = new Inpatient() ;
                 Patients.getItems().setAll(p.getPatients());
@@ -210,7 +219,15 @@ public class HospitalController implements Initializable {
 		});
 	}
 	
-	
+	public boolean verifySpecialty (String in) throws InvalidSpecialtyException{
+		String trimmed = in.trim();
+		for (Specialty s: Specialty.values()){
+			if(trimmed.equalsIgnoreCase(s.name())){
+				return true;
+			}
+		}
+		throw new InvalidSpecialtyException(trimmed);
+	}
 	
 	
 }

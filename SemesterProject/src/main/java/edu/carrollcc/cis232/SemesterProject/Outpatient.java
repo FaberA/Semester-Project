@@ -7,13 +7,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class Outpatient extends Hospital implements Patient { // REQ#4 implements defined interface && REQ#6 extends implemented superclass && REQ#10 use polymorphism
+	
+	public enum Ailment  {
+		HEART, COLD, FLU, BONE;
+	} 
 	
 	private IntegerProperty patientID;
 	public int getPatientID(){
@@ -31,7 +34,7 @@ public class Outpatient extends Hospital implements Patient { // REQ#4 implement
 	
 	private IntegerProperty age;
 	public int getAge(){
-		return IDProperty().get();
+		return AgeProperty().get();
 	}
 	public void setAge(int age){
 		AgeProperty().set(age);;
@@ -76,13 +79,32 @@ public class Outpatient extends Hospital implements Patient { // REQ#4 implement
 	Outpatient(){
 		this.patientID = new SimpleIntegerProperty();
 		this.patientName = new SimpleStringProperty();
+		this.age = new SimpleIntegerProperty();
 		this.ailment = new SimpleStringProperty();
 	}
 	
-	private Outpatient(int patientID, String patientName, String ailment){
+	private Outpatient(int patientID, String patientName, int age, String ailment){
 		this.patientID = new SimpleIntegerProperty(patientID);
 		this.patientName = new SimpleStringProperty(patientName);
-		this.ailment = new SimpleStringProperty(ailment);
+		this.age = new SimpleIntegerProperty(age);
+		try {
+			if(verifyAilment(ailment) == true){
+				this.ailment = new SimpleStringProperty(ailment);
+			}
+		} 
+		catch (InvalidOutAilmentException e) {//REQ#11 catch at least one exception and handle it
+			
+		}
+	}
+	
+	public boolean verifyAilment (String in) throws InvalidOutAilmentException {
+		String trimmed = in.trim();
+		for (Ailment a: Ailment.values()){
+			if(trimmed.equalsIgnoreCase(a.name())){
+				return true;
+			}
+		}
+		throw new InvalidOutAilmentException(trimmed);
 	}
 	
 	@Override
@@ -102,14 +124,14 @@ public class Outpatient extends Hospital implements Patient { // REQ#4 implement
     			while(rs.next()){
     				int patientID = rs.getInt(1);
     				String patientName = rs.getString(2);
-    				String ailment = rs.getString(3);
+    				int age = rs.getInt(3);
+    				String ailment = rs.getString(4);
     				
-    				Patient row = new Outpatient(patientID,patientName,ailment);
+    				Patient row = new Outpatient(patientID,patientName,age,ailment);
     				ll.add(row);
     			}
     		} 
     		catch (SQLException e) {
-    			e.printStackTrace();
     			System.out.println("Error in getPatients.");
     		}
     	super.setPatients(ll);

@@ -20,8 +20,8 @@
                     <columns>
                       <TableColumn fx:id="doctorID" prefWidth="184.0" text="Doctor ID" />
                       <TableColumn fx:id="doctorName" prefWidth="184.0" text="Name" />
-                        <TableColumn fx:id="specialty" prefWidth="184.0" text="Specialty" />
-                        <TableColumn fx:id="shift" prefWidth="184.0" text="Shift" />
+                      <TableColumn fx:id="specialty" prefWidth="184.0" text="Specialty" />
+                      <TableColumn fx:id="shift" prefWidth="184.0" text="Shift" />
                     </columns>
                   </TableView>
                </content>
@@ -32,8 +32,8 @@
                     <columns>
                       <TableColumn fx:id="patientID" editable="false" prefWidth="184.0" text="Patient ID" />
                       <TableColumn fx:id="patientName" prefWidth="184.0" text="Name" />
-                        <TableColumn fx:id="ailment" minWidth="0.0" prefWidth="184.0" text="Ailment" />
-                        <TableColumn fx:id="building" prefWidth="184.0" text="Building" />
+                      <TableColumn fx:id="age" minWidth="0.0" prefWidth="184.0" text="Age" />
+                      <TableColumn fx:id="ailment" prefWidth="184.0" text="Ailment" />
                     </columns>
                   </TableView>
                </content>
@@ -43,10 +43,10 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <TextField fx:id="newDocID" layoutX="113.0" layoutY="52.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Doctor ID " />
-                        <TextField fx:id="newDocName" layoutX="113.0" layoutY="102.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Name" />
-                        <TextField fx:id="newDocSpecialty" layoutX="113.0" layoutY="158.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Specialty" />
-                        <TextField fx:id="newDocShift" layoutX="113.0" layoutY="216.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Shift (Day or Night)" />
-                        <Button fx:id="addNewDoc" layoutX="144.0" layoutY="268.0" mnemonicParsing="false" text="Add New Doctor" textFill="#3f3199" />
+                        <TextField fx:id="newDocName" layoutX="113.0" layoutY="90.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Name" />
+                        <TextField fx:id="newDocSpecialty" layoutX="114.0" layoutY="127.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Specialty" />
+                        <TextField fx:id="newDocShift" layoutX="113.0" layoutY="162.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Shift (Day or Night)" />
+                        <Button fx:id="addNewDoc" layoutX="151.0" layoutY="200.0" mnemonicParsing="false" text="Add New Doctor" textFill="#3f3199" />
                         <Label alignment="CENTER" layoutX="117.0" layoutY="14.0" prefHeight="25.0" prefWidth="173.0" text="Create a New Doctor" textAlignment="CENTER" textFill="#0c1861">
                            <font>
                               <Font name="Microsoft JhengHei Light" size="12.0" />
@@ -57,16 +57,17 @@
                               <Font name="Microsoft JhengHei Light" size="12.0" />
                            </font>
                         </Label>
-                        <TextField fx:id="newPatName" layoutX="483.0" layoutY="102.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Name" />
+                        <TextField fx:id="newPatName" layoutX="483.0" layoutY="90.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Name" />
                         <TextField fx:id="newPatID" layoutX="483.0" layoutY="52.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Patient ID " />
                         <Button fx:id="addNewPat" layoutX="520.0" layoutY="268.0" mnemonicParsing="false" text="Add New Patient" textFill="#3f3199" />
-                        <TextField fx:id="newPatAilment" layoutX="483.0" layoutY="159.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Ailment" />
-                        <RadioButton fx:id="inButton" layoutX="520.0" layoutY="199.0" mnemonicParsing="false" selected="true" text="Inpatient">
+                        <TextField fx:id="newPatAilment" layoutX="483.0" layoutY="162.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Ailment" />
+                        <RadioButton fx:id="inButton" layoutX="483.0" layoutY="204.0" mnemonicParsing="false" selected="true" text="Inpatient">
                            <toggleGroup>
                               <ToggleGroup fx:id="group" />
                            </toggleGroup>
                         </RadioButton>
-                        <RadioButton fx:id="outButton" layoutX="520.0" layoutY="220.0" mnemonicParsing="false" text="Outpatient" toggleGroup="$group" />
+                        <RadioButton fx:id="outButton" layoutX="483.0" layoutY="225.0" mnemonicParsing="false" text="Outpatient" toggleGroup="$group" />
+                        <TextField fx:id="newPatAge" layoutX="483.0" layoutY="127.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Age" />
                      </children>
                   </AnchorPane>
               </content>
