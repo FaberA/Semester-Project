@@ -6,7 +6,7 @@ public class InvalidSpecialtyException extends Exception { //REQ #12 implement a
 	private static final long serialVersionUID = 1L;
 	String temp = null;
 	public InvalidSpecialtyException(String in) {
-		System.out.println("Error!" + in + " is an invalid specialty! These are valid specialties:");
+		System.out.println("Error! " + in + " is an invalid specialty! These are valid specialties:");
 		for(Specialty s: Specialty.values()){
 			System.out.println(s);
 		}

@@ -14,7 +14,7 @@ import javafx.beans.property.StringProperty;
 
 public class Inpatient extends Hospital implements Patient { // REQ#4 implements defined interface && REQ#6 extends implemented superclass && REQ#10 use polymorphism
 	
-	public enum Ailment  {
+	public enum InpatientAilment  {
 		EMERGENCY, SURGERY, TUMOR, TRAUMA;
 	} 
 	
@@ -87,25 +87,9 @@ public class Inpatient extends Hospital implements Patient { // REQ#4 implements
 		this.patientID = new SimpleIntegerProperty(patientID);
 		this.patientName = new SimpleStringProperty(patientName);
 		this.age = new SimpleIntegerProperty(age);
-		try {
-			if(verifyAilment(ailment) == true){
-				this.ailment = new SimpleStringProperty(ailment);
-			}
-		} 
-		catch (InvalidInAilmentException e) {//REQ#11 catch at least one exception and handle it
-			
-		}
+		this.ailment = new SimpleStringProperty(ailment);
 	}
 	
-	public boolean verifyAilment (String in) throws InvalidInAilmentException {
-		String trimmed = in.trim();
-		for (Ailment a: Ailment.values()){
-			if(trimmed.equalsIgnoreCase(a.name())){
-				return true;
-			}
-		}
-		throw new InvalidInAilmentException(trimmed);
-	}
 	@Override
 	public List<Patient> getPatients(){ //REQ # 8 use sql db to retrieve data
 		final String URL = "jdbc:derby:Patient";

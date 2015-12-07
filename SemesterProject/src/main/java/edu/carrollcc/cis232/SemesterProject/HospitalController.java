@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import edu.carrollcc.cis232.SemesterProject.Doctor.Specialty;
+import edu.carrollcc.cis232.SemesterProject.Inpatient.InpatientAilment;
+import edu.carrollcc.cis232.SemesterProject.Outpatient.OutpatientAilment;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -79,7 +81,7 @@ public class HospitalController implements Initializable {
 	@FXML
 	private ToggleGroup group;
 	
-	Patient p = new Inpatient();
+	Boolean isOutpatient = false;
 	@Override
 	public void initialize(URL fxml, ResourceBundle resources){
 			
@@ -119,6 +121,13 @@ public class HospitalController implements Initializable {
 			outButton.setUserData("Outpatient");
 			
 			Doctor d = new Doctor();
+			Patient p = null;
+			if(isOutpatient){
+				p = new Outpatient();
+			}
+			else{
+				p = new Inpatient();
+			}
 			Patients.getItems().setAll(p.getPatients());//default to inpatient
 			Doctors.getItems().setAll(d.getDoctors());
 	  
@@ -175,6 +184,13 @@ public class HospitalController implements Initializable {
         		PreparedStatement stmt;
         		
         		try {
+					verifyAilment(newPatAilment.getText());
+				} 
+        		catch (InvalidInAilmentException|InvalidOutAilmentException e) {//REQ#11 catch exception and handle it
+        			return;
+				}
+        		
+        		try {
         			conn = DriverManager.getConnection(DB_URL);
         			
         			String getNewPatient = "INSERT INTO Patients (patientID, patientName, age, ailment) VALUES (?,?,?,?)";
@@ -205,13 +221,12 @@ public class HospitalController implements Initializable {
 		    public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
 
 		         if (group.getSelectedToggle() != null) {
-
-		             System.out.println(group.getSelectedToggle().getUserData().toString());
-		             if(group.getSelectedToggle().getUserData().toString() == "Outpatient"){
-		            	p = new Outpatient();
+		             if(group.getSelectedToggle().getUserData().toString().equals("Outpatient")){
+		            	System.out.println(group.getSelectedToggle().getUserData().toString());
+		            	isOutpatient = true;
 		             }
 		             else{
-		            	 p = new Inpatient();
+		            	isOutpatient = false;
 		             }
 		         }
 
@@ -229,5 +244,23 @@ public class HospitalController implements Initializable {
 		throw new InvalidSpecialtyException(trimmed);
 	}
 	
-	
+	public boolean verifyAilment (String in) throws InvalidInAilmentException, InvalidOutAilmentException {
+		String trimmed = in.trim();
+		if(!isOutpatient){
+			for (InpatientAilment a: InpatientAilment.values()){
+				if(trimmed.equalsIgnoreCase(a.name())){
+					return true;
+				}
+			}
+			throw new InvalidInAilmentException(trimmed);
+		}
+		else{
+			for (OutpatientAilment a: OutpatientAilment.values()){
+				if(trimmed.equalsIgnoreCase(a.name())){
+					return true;
+				}
+			}
+			throw new InvalidOutAilmentException(trimmed);
+		}
+	}
 }
