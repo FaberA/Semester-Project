@@ -5,13 +5,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.List;
-
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
 	
@@ -84,18 +83,22 @@ public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
 		this.shift = new SimpleStringProperty();
 	}
 	
-	private Doctor(int doctorID, String doctorName, String specialty, String shift){
+	public Doctor(int doctorID, String doctorName, String specialty, String shift){
 		this.doctorID = new SimpleIntegerProperty(doctorID);
 		this.doctorName = new SimpleStringProperty(doctorName);
 		this.specialty = new SimpleStringProperty(specialty);
 		this.shift = new SimpleStringProperty(shift);
 	}
+	
+	//public Doctor(int doctorID){
+	//	possibly utilize this to delete value from hospital object
+	//}
 		
-	public List<Doctor> getDoctors(){ //REQ # 8 use sql db to retrieve data
+	public ObservableList<Doctor> getDoctors(){ //REQ # 8 use sql db to retrieve data
 		final String URL = "jdbc:derby:Doctor";
     	Connection conn;
 		Statement stmt;
-		List<Doctor> ll = new LinkedList<Doctor>();
+		ObservableList<Doctor> ll = FXCollections.observableArrayList();
 		ResultSet rs;
     		try {
     			conn = DriverManager.getConnection(URL);

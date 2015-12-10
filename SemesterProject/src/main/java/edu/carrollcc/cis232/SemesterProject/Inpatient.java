@@ -5,12 +5,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
-import java.util.List;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Inpatient extends Hospital implements Patient { // REQ#4 implements defined interface && REQ#6 extends implemented superclass && REQ#10 use polymorphism
 	
@@ -83,7 +83,7 @@ public class Inpatient extends Hospital implements Patient { // REQ#4 implements
 		this.ailment = new SimpleStringProperty();
 	}
 	
-	private Inpatient(int patientID, String patientName, int age, String ailment){
+	public Inpatient(int patientID, String patientName, int age, String ailment){
 		this.patientID = new SimpleIntegerProperty(patientID);
 		this.patientName = new SimpleStringProperty(patientName);
 		this.age = new SimpleIntegerProperty(age);
@@ -91,11 +91,11 @@ public class Inpatient extends Hospital implements Patient { // REQ#4 implements
 	}
 	
 	@Override
-	public List<Patient> getPatients(){ //REQ # 8 use sql db to retrieve data
+	public ObservableList<Patient> getPatients(){ //REQ # 8 use sql db to retrieve data
 		final String URL = "jdbc:derby:Patient";
     	Connection conn;
 		Statement stmt;
-		List<Patient> ll = new LinkedList<Patient>();
+		ObservableList<Patient> ll = FXCollections.observableArrayList();
 		ResultSet rs;
     		try {
     			conn = DriverManager.getConnection(URL);

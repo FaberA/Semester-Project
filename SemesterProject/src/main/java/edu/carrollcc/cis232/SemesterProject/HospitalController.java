@@ -1,16 +1,19 @@
 package edu.carrollcc.cis232.SemesterProject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.Scanner;
 
 import edu.carrollcc.cis232.SemesterProject.Doctor.Specialty;
 import edu.carrollcc.cis232.SemesterProject.Inpatient.InpatientAilment;
 import edu.carrollcc.cis232.SemesterProject.Outpatient.OutpatientAilment;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -18,6 +21,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -81,7 +85,19 @@ public class HospitalController implements Initializable {
 	@FXML
 	private ToggleGroup group;
 	
+	@FXML
+	private TextField delDoctor;
+	@FXML
+	private TextField delPatient;
+	@FXML
+	private Button delDoctorButton;
+	@FXML
+	private Button delPatientButton;
+	@FXML
+	private Label hospitalName;
+	
 	Boolean isOutpatient = false;
+	Hospital h = new Hospital();
 	@Override
 	public void initialize(URL fxml, ResourceBundle resources){
 			
@@ -119,7 +135,6 @@ public class HospitalController implements Initializable {
 			
 			inButton.setUserData("Inpatient");
 			outButton.setUserData("Outpatient");
-			
 			Doctor d = new Doctor();
 			Patient p = null;
 			if(isOutpatient){
@@ -128,8 +143,12 @@ public class HospitalController implements Initializable {
 			else{
 				p = new Inpatient();
 			}
-			Patients.getItems().setAll(p.getPatients());//default to inpatient
-			Doctors.getItems().setAll(d.getDoctors());
+			h.setDoctors(d.getDoctors());
+			h.setPatients(p.getPatients());
+			h.setHospitalName("South Central");
+			Patients.getItems().setAll(h.getPatients());
+			Doctors.getItems().setAll(h.getDoctors());
+			hospitalName.setText(h.getHospitalName());
 	  
 		addNewDoc.setOnAction(new EventHandler<ActionEvent>() {//REQ # 8 use sql db to retrieve data
             @Override
@@ -138,11 +157,13 @@ public class HospitalController implements Initializable {
             	Connection conn;
         		PreparedStatement stmt;
         		
-        		if(!newDocShift.getText().equalsIgnoreCase("Day") || newDocShift.getText().equalsIgnoreCase("Night")){
+        		if(newDocShift.getText().equalsIgnoreCase("Day") || newDocShift.getText().equalsIgnoreCase("Night" ) ){
+        			System.out.println("Thank you for entering a valid shift.");
+        		}
+        		else{ 
         			System.out.println("Invalid shift! Enter Day or Night!");
         			return;
         		}
-        		
         		try {
 					verifySpecialty(newDocSpecialty.getText());
 				} 
@@ -160,6 +181,7 @@ public class HospitalController implements Initializable {
         			stmt.setString(4, newDocShift.getText());		                 
         			stmt.execute();
         			
+        			h.addDoctor(new Doctor(Integer.parseInt(newDocID.getText()), newDocName.getText(), newDocSpecialty.getText(), newDocShift.getText()));
         		}
         		catch (SQLException e) {
             		System.out.println("Error in creating new doctor.");
@@ -171,8 +193,9 @@ public class HospitalController implements Initializable {
                 newDocName.clear();
                 newDocSpecialty.clear();
                 newDocShift.clear();
+                
                 Doctor d = new Doctor();
-                Doctors.getItems().setAll(d.getDoctors());
+                Doctors.getItems().setAll(h.getDoctors());
             }
         });
 		
@@ -182,6 +205,11 @@ public class HospitalController implements Initializable {
             	final String DB_URL = "jdbc:derby:Patient";
             	Connection conn;
         		PreparedStatement stmt;
+        		
+        		if(Integer.parseInt(newPatAge.getText()) < 0){
+        			System.out.println("Invalid age! Enter a positive number!");
+        			return;
+        		}
         		
         		try {
 					verifyAilment(newPatAilment.getText());
@@ -201,6 +229,12 @@ public class HospitalController implements Initializable {
         			stmt.setString(4, newPatAilment.getText());		                 
         			stmt.execute();
         			
+        			if(isOutpatient){
+        				h.addPatient(new Outpatient(Integer.parseInt(newPatID.getText()), newPatName.getText(), Integer.parseInt(newPatAge.getText()), newPatAilment.getText()));
+        			}
+        			else{
+        				h.addPatient(new Inpatient(Integer.parseInt(newPatID.getText()), newPatName.getText(), Integer.parseInt(newPatAge.getText()), newPatAilment.getText()));
+        			}
         		}
         		catch (SQLException e) {
             		System.out.println("Error in creating new patient!");
@@ -212,8 +246,9 @@ public class HospitalController implements Initializable {
                 newPatName.clear();
                 newPatAge.clear();
                 newPatAilment.clear();
-                Patient p = new Inpatient() ;
-                Patients.getItems().setAll(p.getPatients());
+                
+                
+                Patients.getItems().setAll(h.getPatients());
             }
         });
 		
@@ -222,7 +257,6 @@ public class HospitalController implements Initializable {
 
 		         if (group.getSelectedToggle() != null) {
 		             if(group.getSelectedToggle().getUserData().toString().equals("Outpatient")){
-		            	System.out.println(group.getSelectedToggle().getUserData().toString());
 		            	isOutpatient = true;
 		             }
 		             else{
@@ -232,6 +266,107 @@ public class HospitalController implements Initializable {
 
 		     } 
 		});
+		
+		delDoctorButton.setOnAction(new EventHandler<ActionEvent>() {//delete value from db, but leave in Hospital object for records
+            @Override
+            public void handle(ActionEvent event) {
+            	final String DB_URL = "jdbc:derby:Doctor";
+            	Connection conn;
+        		PreparedStatement stmt;
+        		
+        		String verifyDelete = "Are you sure you wish to delete the doctor with ID: ";
+        		StringBuilder sb = new StringBuilder(verifyDelete); //REQ #2 utilize StringBuilder (Would liked to have found a better utilization of this)
+        		sb.append(Integer.parseInt(delDoctor.getText()) + "?\n(Enter y/n)");
+        		System.out.println(sb);
+        		
+        		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        		String input = null;
+				try {
+					input = br.readLine();
+				} catch (IOException e) {
+					System.out.println("Error Reading Input");
+				}
+        		
+        		if(input.equalsIgnoreCase("Y")){
+        			try {
+        				conn = DriverManager.getConnection(DB_URL);
+        			
+        				String getNewDoctor = "DELETE FROM Doctors WHERE doctorID = ?";
+        				stmt = conn.prepareStatement(getNewDoctor);
+        				stmt.setInt(1, Integer.parseInt(delDoctor.getText()));		                 
+        				stmt.execute();
+        			}
+        			catch (SQLException e) {
+        				System.out.println("Error in deleting Doctor.");
+        			}
+        			catch(NumberFormatException e){
+        				System.out.println("Error! Enter a valid integer ID");
+        			}
+        			delDoctor.clear();
+        			Doctor d = new Doctor();
+        			Doctors.getItems().setAll(d.getDoctors());
+        		}
+        		else if(input.equalsIgnoreCase("N")){
+        			System.out.println("Delete Canceled");
+        			return;
+        		}
+        		else{
+        			System.out.println("Invalid input!");
+        			return;
+        		}
+            }
+        });
+		
+		delPatientButton.setOnAction(new EventHandler<ActionEvent>() {//delete value from db, but leave in Hospital object for records
+            @Override
+            public void handle(ActionEvent event) {
+            	final String DB_URL = "jdbc:derby:Patient";
+            	Connection conn;
+        		PreparedStatement stmt;
+        		
+        		String verifyDelete = "Are you sure you wish to delete the patient with ID: ";
+        		StringBuilder sb = new StringBuilder(verifyDelete); //REQ #2 utilize StringBuilder (Would liked to have found a better utilization of this)
+        		sb.append(Integer.parseInt(delPatient.getText()) + "?\n(Enter y/n)");
+        		System.out.println(sb);
+        		
+        		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        		String input = null;
+				try {
+					input = br.readLine();
+				} catch (IOException e) {
+					System.out.println("Error Reading Input");
+				}
+        		
+				
+        		if(input.equalsIgnoreCase("Y")){
+        			try {
+        				conn = DriverManager.getConnection(DB_URL);
+        			
+        				String getNewDoctor = "DELETE FROM Patients WHERE patientID = ?";
+        				stmt = conn.prepareStatement(getNewDoctor);
+        				stmt.setInt(1, Integer.parseInt(delPatient.getText()));		                 
+        				stmt.execute();
+        			}
+        			catch (SQLException e) {
+        				System.out.println("Error in deleting patient.");
+        			}
+        			catch(NumberFormatException e){
+        				System.out.println("Error! Enter a valid integer ID");
+        			}
+        			delPatient.clear();
+        			Patient p = new Inpatient();// default to inpatient to access sql db
+        			Patients.getItems().setAll(p.getPatients());
+        		}
+        		else if(input.equalsIgnoreCase("N")){
+        			System.out.println("Delete Canceled");
+        			return;
+        		}
+        		else{
+        			System.out.println("Invalid input!");
+        			return;
+        		}
+            }
+        });
 	}
 	
 	public boolean verifySpecialty (String in) throws InvalidSpecialtyException{

@@ -12,12 +12,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
- * 
-    include using either the StringBuilder or StringTokenizer classes. (Comment with REQ#2)
-
- *
- */
 
 public class App extends Application {
 	final static String DOCTOR_URL = "jdbc:derby:Doctor;create=true";
@@ -44,11 +38,11 @@ public class App extends Application {
 	public static void main( String[] args )
     {
         System.out.println( "Faber Alarcon - Semester Project" ); // REQ#1 display your name when it runs
-        createDB();
+        createDB(); // currently recreate DB each start for testing purposes, in actuality this code would run once then not again once DB has already been created
         launch(args);
     }
 
-	public static void addDoctor(Connection conn, int id, String name, String specialty, String shift){
+	public static void addDoctor(Connection conn, int id, String name, String specialty, String shift){ // add doctor to db manually
     	
     	try{
     		PreparedStatement stmt;
@@ -67,7 +61,7 @@ public class App extends Application {
     	}
     }
 	
-	public static void addPatient(Connection conn, int id, String name, int age, String ailment){
+	public static void addPatient(Connection conn, int id, String name, int age, String ailment){ // add patient to db manually
     	try{
     		PreparedStatement stmt;
     		

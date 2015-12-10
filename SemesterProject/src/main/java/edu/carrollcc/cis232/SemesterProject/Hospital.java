@@ -1,25 +1,72 @@
 package edu.carrollcc.cis232.SemesterProject;
 
-import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class Hospital { //REQ#5 define super class to be implemented by 2 sub classes
-
-	private List<Doctor> doctors = new ArrayList<Doctor>();
-	private List<Patient> patients = new ArrayList<Patient>();
-	String hospitalName;
 	
+	private StringProperty hospitalName;
+	
+	public String getHospitalName(){
+		return hospitalNameProperty().get();
+	}
+	public void setHospitalName(String name){
+		hospitalNameProperty().set(name);;
+	}
+	public StringProperty hospitalNameProperty(){
+		if(hospitalName == null){
+			hospitalName = new SimpleStringProperty(this,"doctorName");
+		}
+		return hospitalName;
+	}
+	
+	private ListProperty<Doctor> doctors;
+	
+	public ObservableList<Doctor> getDoctors(){
+		return doctorsProperty().get();
+	}
+	public void setDoctors(ObservableList<Doctor> d){
+		doctorsProperty().set(d);;
+	}
+	public ListProperty<Doctor> doctorsProperty(){
+		if(doctors == null){
+			doctors = new SimpleListProperty<Doctor>(this,"doctors");
+		}
+		return doctors;
+	}
+	
+	private ListProperty<Patient> patients;
+	
+	public ObservableList<Patient> getPatients(){
+		return patientsProperty().get();
+	}
+	public void setPatients(ObservableList<Patient> p){
+		patientsProperty().set(p);;
+	}
+	public ListProperty<Patient> patientsProperty(){
+		if(patients == null){
+			patients = new SimpleListProperty<Patient>(this,"patients");
+		}
+		return patients;
+	}
 	
 	public Hospital(){
-		this.hospitalName = null;
-		this.doctors = null;
-		this.patients = null;
+		this.hospitalName = new SimpleStringProperty();;
+		this.doctors = new SimpleListProperty<Doctor>();
+		this.patients = new SimpleListProperty<Patient>();
 	}
 	
 	public Hospital(String name, List<Doctor> d, List<Patient> p){
-		this.hospitalName = name;
-		this.doctors = d;
-		this.patients = p;
+		this.hospitalName = new SimpleStringProperty(name);
+		ObservableList<Doctor> doctorList = FXCollections.observableArrayList(d);
+		this.doctors = new SimpleListProperty<Doctor>(doctorList);
+		ObservableList<Patient> patientList = FXCollections.observableArrayList(p);
+		this.patients = new SimpleListProperty<Patient>(patientList);
 	}
 	
 	public void addDoctor(Doctor d){
@@ -28,19 +75,10 @@ public class Hospital { //REQ#5 define super class to be implemented by 2 sub cl
 	public void addPatient(Patient p){
 		patients.add(p);
 	}
-	
-	public List<Doctor> getDoctors(){
-		return doctors;
+	public void deleteDoctor(Doctor d){
+		doctors.remove(d);
 	}
-	public List<Patient> getPatients(){
-		return patients;
-	}
-	
-	public void setDoctors(List<Doctor> d){
-		this.doctors = d;
-	}
-	
-	public void setPatients(List<Patient> p){
-		this.patients = p;
+	public void deletePatient(Patient p){
+		patients.remove(p);
 	}
 }

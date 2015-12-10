@@ -20,8 +20,8 @@
                     <columns>
                       <TableColumn fx:id="doctorID" prefWidth="184.0" text="Doctor ID" />
                       <TableColumn fx:id="doctorName" prefWidth="184.0" text="Name" />
-                      <TableColumn fx:id="specialty" prefWidth="184.0" text="Specialty" />
-                      <TableColumn fx:id="shift" prefWidth="184.0" text="Shift" />
+                        <TableColumn fx:id="specialty" prefWidth="184.0" text="Specialty" />
+                        <TableColumn fx:id="shift" prefWidth="184.0" text="Shift" />
                     </columns>
                   </TableView>
                </content>
@@ -32,8 +32,8 @@
                     <columns>
                       <TableColumn fx:id="patientID" editable="false" prefWidth="184.0" text="Patient ID" />
                       <TableColumn fx:id="patientName" prefWidth="184.0" text="Name" />
-                      <TableColumn fx:id="age" minWidth="0.0" prefWidth="184.0" text="Age" />
-                      <TableColumn fx:id="ailment" prefWidth="184.0" text="Ailment" />
+                        <TableColumn fx:id="age" minWidth="0.0" prefWidth="184.0" text="Age" />
+                        <TableColumn fx:id="ailment" prefWidth="184.0" text="Ailment" />
                     </columns>
                   </TableView>
                </content>
@@ -68,6 +68,33 @@
                         </RadioButton>
                         <RadioButton fx:id="outButton" layoutX="483.0" layoutY="225.0" mnemonicParsing="false" text="Outpatient" toggleGroup="$group" />
                         <TextField fx:id="newPatAge" layoutX="483.0" layoutY="127.0" prefHeight="25.0" prefWidth="180.0" promptText="Enter Age" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Delete Data">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="130.0" layoutY="41.0" text="Delete Doctor">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="493.0" layoutY="41.0" text="Delete Patient">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="delDoctor" layoutX="105.0" layoutY="80.0" promptText="Enter Doctor ID" />
+                        <TextField fx:id="delPatient" layoutX="469.0" layoutY="80.0" promptText="Enter Patient ID" />
+                        <Button fx:id="delDoctorButton" layoutX="135.0" layoutY="125.0" mnemonicParsing="false" text="Delete Doctor" />
+                        <Button fx:id="delPatientButton" layoutX="498.0" layoutY="125.0" mnemonicParsing="false" text="Delete Patient" />
+                        <Label fx:id="hospitalName" layoutX="354.0" layoutY="291.0" prefHeight="17.0" prefWidth="0.0">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                        </Label>
                      </children>
                   </AnchorPane>
               </content>
