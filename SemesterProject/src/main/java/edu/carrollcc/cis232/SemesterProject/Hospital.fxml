@@ -20,8 +20,8 @@
                     <columns>
                       <TableColumn fx:id="doctorID" prefWidth="184.0" text="Doctor ID" />
                       <TableColumn fx:id="doctorName" prefWidth="184.0" text="Name" />
-                        <TableColumn fx:id="specialty" prefWidth="184.0" text="Specialty" />
-                        <TableColumn fx:id="shift" prefWidth="184.0" text="Shift" />
+                      <TableColumn fx:id="specialty" prefWidth="184.0" text="Specialty" />
+                      <TableColumn fx:id="shift" prefWidth="184.0" text="Shift" />
                     </columns>
                   </TableView>
                </content>
@@ -32,8 +32,8 @@
                     <columns>
                       <TableColumn fx:id="patientID" editable="false" prefWidth="184.0" text="Patient ID" />
                       <TableColumn fx:id="patientName" prefWidth="184.0" text="Name" />
-                        <TableColumn fx:id="age" minWidth="0.0" prefWidth="184.0" text="Age" />
-                        <TableColumn fx:id="ailment" prefWidth="184.0" text="Ailment" />
+                      <TableColumn fx:id="age" minWidth="0.0" prefWidth="184.0" text="Age" />
+                      <TableColumn fx:id="ailment" prefWidth="184.0" text="Ailment" />
                     </columns>
                   </TableView>
                </content>

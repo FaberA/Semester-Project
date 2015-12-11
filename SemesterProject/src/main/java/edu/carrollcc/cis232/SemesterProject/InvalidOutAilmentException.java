@@ -7,7 +7,7 @@ public class InvalidOutAilmentException extends Exception {//REQ #12 implement a
 	String temp = null;
 	public InvalidOutAilmentException(String in) {
 		System.out.println("Error! " + in + " is an invalid ailment for this patient type! These are valid ailments:");
-		for(OutpatientAilment a: OutpatientAilment.values()){
+		for(OutpatientAilment a: OutpatientAilment.values()){//print out all valid outpatient ailments
 			System.out.println(a);
 		}
 		this.temp = in;

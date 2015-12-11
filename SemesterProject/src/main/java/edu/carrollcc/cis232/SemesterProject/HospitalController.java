@@ -30,6 +30,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
 public class HospitalController implements Initializable {
+	//vars
 	@FXML 
 	private Button addNewDoc;
 	@FXML 
@@ -140,7 +141,7 @@ public class HospitalController implements Initializable {
 			outButton.setUserData("Outpatient");
 			Doctor d = new Doctor();
 			Patient p = null;
-			if(isOutpatient){
+			if(isOutpatient){//determine if outpatient or inpatient
 				p = new Outpatient();
 			}
 			else{
@@ -155,7 +156,7 @@ public class HospitalController implements Initializable {
 	  
 		addNewDoc.setOnAction(new EventHandler<ActionEvent>() {//REQ # 8 use sql db to retrieve data
             @Override
-            public void handle(ActionEvent event) {
+            public void handle(ActionEvent event) {//handle add new doctor
         		if(newDocShift.getText().equalsIgnoreCase("Day") || newDocShift.getText().equalsIgnoreCase("Night" ) ){
         			System.out.println("Thank you for entering a valid shift.");
         		}
@@ -177,7 +178,7 @@ public class HospitalController implements Initializable {
 		
 		addNewPat.setOnAction(new EventHandler<ActionEvent>() {//REQ # 8 use sql db to retrieve data
             @Override
-            public void handle(ActionEvent event) {
+            public void handle(ActionEvent event) {//handle add new patient
         		try{
         			if(Integer.parseInt(newPatAge.getText()) < 0){
             			System.out.println("Invalid age! Enter a positive number!");
@@ -200,7 +201,7 @@ public class HospitalController implements Initializable {
             }
         });
 		
-		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
+		group.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){//group together in/out patient toggle buttons
 		    public void changed(ObservableValue<? extends Toggle> ov, Toggle old_toggle, Toggle new_toggle) {
 
 		         if (group.getSelectedToggle() != null) {
@@ -214,21 +215,21 @@ public class HospitalController implements Initializable {
 		     } 
 		});
 		
-		delDoctorButton.setOnAction(new EventHandler<ActionEvent>() {//delete value from db, but leave in Hospital object for records
+		delDoctorButton.setOnAction(new EventHandler<ActionEvent>() {//delete doctor value from db and hospital object
             @Override
             public void handle(ActionEvent event) {
             	delete(DOCTOR_URL, delDoctor, "Doctors", delNewDoctor);
             }
         });
 		
-		delPatientButton.setOnAction(new EventHandler<ActionEvent>() {//delete value from db, but leave in Hospital object for records
+		delPatientButton.setOnAction(new EventHandler<ActionEvent>() {//delete patient value from db and hospital object
             @Override
             public void handle(ActionEvent event) {
             	delete(PATIENT_URL, delPatient, "Patients", delNewPatient);
             }
         });
 	}
-	public void delete(String db_url, TextField tfType, String type, String sql){
+	public void delete(String db_url, TextField tfType, String type, String sql){//method to delete value from sql db as well as from a list
     	Connection conn;
 		PreparedStatement stmt;
 		
@@ -282,7 +283,7 @@ public class HospitalController implements Initializable {
 		}
     }
 	
-	public void add(String db_url,String sql, String type, TextField id, TextField name, TextField op1, TextField op2){
+	public void add(String db_url,String sql, String type, TextField id, TextField name, TextField op1, TextField op2){ // add value to sql db and list
 		Connection conn;
 		PreparedStatement stmt;
 		try {
@@ -329,7 +330,7 @@ public class HospitalController implements Initializable {
 		}
         
 	}
-	public boolean verifySpecialty (String in) throws InvalidSpecialtyException{
+	public boolean verifySpecialty (String in) throws InvalidSpecialtyException{//verify valid specialty and throw excpetion when required
 		String trimmed = in.trim();
 		for (Specialty s: Specialty.values()){
 			if(trimmed.equalsIgnoreCase(s.name())){
@@ -339,7 +340,7 @@ public class HospitalController implements Initializable {
 		throw new InvalidSpecialtyException(trimmed);
 	}
 	
-	public boolean verifyAilment (String in) throws InvalidInAilmentException, InvalidOutAilmentException {
+	public boolean verifyAilment (String in) throws InvalidInAilmentException, InvalidOutAilmentException {//verify valid ailment and throw exception when required
 		String trimmed = in.trim();
 		if(!isOutpatient){
 			for (InpatientAilment a: InpatientAilment.values()){

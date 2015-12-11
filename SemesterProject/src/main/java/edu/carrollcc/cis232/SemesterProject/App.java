@@ -82,7 +82,7 @@ public class App extends Application {
 	public static void createDB(){ //REQ #7 use sql db to store data
 		Connection conn;
 		Statement stmt;
-		try {
+		try {//connect to doctor db
 			conn = DriverManager.getConnection(DOCTOR_URL);
 			stmt = conn.createStatement();
 			String dropTable = "DROP TABLE Doctors";
@@ -104,7 +104,7 @@ public class App extends Application {
 						 "  shift CHAR(10) )"; 
 			stmt.execute(sql);
 				
-			addDoctor(conn, 0, "Bill Gentry",     "Cardiologist",   "Day");
+			addDoctor(conn, 0, "Bill Gentry",     "Cardiologist",   "Day");  // add data to populate table
 			addDoctor(conn, 1, "Will Bentry",     "Pediatrician",   "Day");
 			addDoctor(conn, 2, "Jonah Sentry",    "Surgeon",        "Night");
 			addDoctor(conn, 3, "Ezekiel Houdini", "Emergency",      "Day");
@@ -117,7 +117,7 @@ public class App extends Application {
 		catch (SQLException e) {
 			System.out.println("Error creating Doctor DB");
 		}
-		try {
+		try { // connect to patient db
 			conn = DriverManager.getConnection(PATIENT_URL);
 			stmt = conn.createStatement();
 			String dropTable = "DROP TABLE Patients";

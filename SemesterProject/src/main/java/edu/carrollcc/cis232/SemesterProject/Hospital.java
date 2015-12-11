@@ -56,13 +56,13 @@ public class Hospital { //REQ#5 define super class to be implemented by 2 sub cl
 		return patients;
 	}
 	
-	public Hospital(){
+	public Hospital(){ //no arg constructor
 		this.hospitalName = new SimpleStringProperty();;
 		this.doctors = new SimpleListProperty<Doctor>();
 		this.patients = new SimpleListProperty<Patient>();
 	}
 	
-	public Hospital(String name, List<Doctor> d, List<Patient> p){
+	public Hospital(String name, List<Doctor> d, List<Patient> p){ // normal constructor
 		this.hospitalName = new SimpleStringProperty(name);
 		ObservableList<Doctor> doctorList = FXCollections.observableArrayList(d);
 		this.doctors = new SimpleListProperty<Doctor>(doctorList);
@@ -70,13 +70,13 @@ public class Hospital { //REQ#5 define super class to be implemented by 2 sub cl
 		this.patients = new SimpleListProperty<Patient>(patientList);
 	}
 	
-	public void addDoctor(Doctor d){
+	public void addDoctor(Doctor d){// add a doctor to the doctor list
 		doctors.add(d);
 	}
-	public void addPatient(Patient p){
+	public void addPatient(Patient p){// add a patient to the patient list
 		patients.add(p);
 	}
-	public void deleteDoctor(String doctorID){
+	public void deleteDoctor(String doctorID){//delete doctor based on doctorID
 		String search = doctorID;
 		ListIterator<Doctor> iter = this.getDoctors().listIterator();
 		while(iter.hasNext()){
@@ -86,7 +86,7 @@ public class Hospital { //REQ#5 define super class to be implemented by 2 sub cl
 			}
 		}
 	}
-	public void deletePatient(String patientID){
+	public void deletePatient(String patientID){//delete patient based on patientID
 		String search = patientID;
 		ListIterator<Patient> iter = this.getPatients().listIterator();
 		while(iter.hasNext()){

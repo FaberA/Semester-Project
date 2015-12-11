@@ -14,7 +14,7 @@ import javafx.collections.ObservableList;
 
 public class Inpatient extends Hospital implements Patient { // REQ#4 implements defined interface && REQ#6 extends implemented superclass && REQ#10 use polymorphism
 	
-	public enum InpatientAilment  {
+	public enum InpatientAilment  {//edit this enum to add or remove ailment types
 		EMERGENCY, SURGERY, TUMOR, TRAUMA;
 	} 
 	
@@ -77,14 +77,14 @@ public class Inpatient extends Hospital implements Patient { // REQ#4 implements
 		return ailment;
 	}
 	
-	Inpatient(){
+	Inpatient(){//no arg constructor
 		this.patientID = new SimpleIntegerProperty();
 		this.patientName = new SimpleStringProperty();
 		this.age = new SimpleIntegerProperty();
 		this.ailment = new SimpleStringProperty();
 	}
 	
-	public Inpatient(int patientID, String patientName, int age, String ailment){
+	public Inpatient(int patientID, String patientName, int age, String ailment){//normal constructor
 		this.patientID = new SimpleIntegerProperty(patientID);
 		this.patientName = new SimpleStringProperty(patientName);
 		this.age = new SimpleIntegerProperty(age);

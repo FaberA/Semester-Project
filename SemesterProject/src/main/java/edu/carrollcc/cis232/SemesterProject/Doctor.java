@@ -14,7 +14,7 @@ import javafx.collections.ObservableList;
 
 public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
 	
-	public enum Specialty  {
+	public enum Specialty  { // if any specialties want to be added just add value to this enum
 		EMERGENCY, CARDIOLOGIST, PEDIATRICIAN, SURGEON, ONCOLOGIST;
 	} 
 	
@@ -76,14 +76,14 @@ public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
 		return shift;
 	}
 	
-	Doctor(){
+	Doctor(){ // no arg constructor
 		this.doctorID = new SimpleIntegerProperty();
 		this.doctorName = new SimpleStringProperty();
 		this.specialty = new SimpleStringProperty();
 		this.shift = new SimpleStringProperty();
 	}
 	
-	public Doctor(int doctorID, String doctorName, String specialty, String shift){
+	public Doctor(int doctorID, String doctorName, String specialty, String shift){ // normal constructor
 		this.doctorID = new SimpleIntegerProperty(doctorID);
 		this.doctorName = new SimpleStringProperty(doctorName);
 		this.specialty = new SimpleStringProperty(specialty);

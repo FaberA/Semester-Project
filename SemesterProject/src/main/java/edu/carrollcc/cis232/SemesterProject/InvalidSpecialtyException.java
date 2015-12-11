@@ -7,7 +7,7 @@ public class InvalidSpecialtyException extends Exception { //REQ #12 implement a
 	String temp = null;
 	public InvalidSpecialtyException(String in) {
 		System.out.println("Error! " + in + " is an invalid specialty! These are valid specialties:");
-		for(Specialty s: Specialty.values()){
+		for(Specialty s: Specialty.values()){//print out all valid specialties
 			System.out.println(s);
 		}
 		this.temp = in;
