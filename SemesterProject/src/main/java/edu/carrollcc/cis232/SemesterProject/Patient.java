@@ -9,4 +9,6 @@ public interface Patient { // REQ # 3 define interface to be used by two classes
 	public void setAilment(String a);
 	
 	public ObservableList<Patient> getPatients();
+
+	public int getPatientID();
 }

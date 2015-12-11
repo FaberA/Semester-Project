@@ -19,6 +19,7 @@ public class Outpatient extends Hospital implements Patient { // REQ#4 implement
 	} 
 	
 	private IntegerProperty patientID;
+	@Override
 	public int getPatientID(){
 		return IDProperty().get();
 	}

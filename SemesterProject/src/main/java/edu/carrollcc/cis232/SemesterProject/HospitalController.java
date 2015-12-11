@@ -9,8 +9,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
-import java.util.Scanner;
-
 import edu.carrollcc.cis232.SemesterProject.Doctor.Specialty;
 import edu.carrollcc.cis232.SemesterProject.Inpatient.InpatientAilment;
 import edu.carrollcc.cis232.SemesterProject.Outpatient.OutpatientAilment;
@@ -31,9 +29,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 
-
 public class HospitalController implements Initializable {
-
 	@FXML 
 	private Button addNewDoc;
 	@FXML 
@@ -98,6 +94,13 @@ public class HospitalController implements Initializable {
 	
 	Boolean isOutpatient = false;
 	Hospital h = new Hospital();
+	
+	final String PATIENT_URL = "jdbc:derby:Patient";
+	final String DOCTOR_URL = "jdbc:derby:Doctor";
+	final String delNewDoctor = "DELETE FROM Doctors WHERE doctorID = ?";
+	final String getNewDoctor = "INSERT INTO Doctors (doctorID, doctorName, specialty, shift) VALUES (?,?,?,?)";
+	final String delNewPatient = "DELETE FROM Patients WHERE patientID = ?";
+	final String getNewPatient = "INSERT INTO Patients (patientID, patientName, age, ailment) VALUES (?,?,?,?)";
 	@Override
 	public void initialize(URL fxml, ResourceBundle resources){
 			
@@ -143,9 +146,9 @@ public class HospitalController implements Initializable {
 			else{
 				p = new Inpatient();
 			}
-			h.setDoctors(d.getDoctors());
-			h.setPatients(p.getPatients());
-			h.setHospitalName("South Central");
+			h.setDoctors(d.getDoctors()); //get initial doctors list
+			h.setPatients(p.getPatients()); //get initial patients list
+			h.setHospitalName("South Central"); //Arbitrary hospital name
 			Patients.getItems().setAll(h.getPatients());
 			Doctors.getItems().setAll(h.getDoctors());
 			hospitalName.setText(h.getHospitalName());
@@ -153,10 +156,6 @@ public class HospitalController implements Initializable {
 		addNewDoc.setOnAction(new EventHandler<ActionEvent>() {//REQ # 8 use sql db to retrieve data
             @Override
             public void handle(ActionEvent event) {
-            	final String DB_URL = "jdbc:derby:Doctor";
-            	Connection conn;
-        		PreparedStatement stmt;
-        		
         		if(newDocShift.getText().equalsIgnoreCase("Day") || newDocShift.getText().equalsIgnoreCase("Night" ) ){
         			System.out.println("Thank you for entering a valid shift.");
         		}
@@ -164,50 +163,29 @@ public class HospitalController implements Initializable {
         			System.out.println("Invalid shift! Enter Day or Night!");
         			return;
         		}
+        		
         		try {
 					verifySpecialty(newDocSpecialty.getText());
 				} 
         		catch (InvalidSpecialtyException e) {//REQ#11 catch exception and handle it
         			return;
 				}
-        		try {
-        			conn = DriverManager.getConnection(DB_URL);
-        			
-        			String getNewDoctor = "INSERT INTO Doctors (doctorID, doctorName, specialty, shift) VALUES (?,?,?,?)";
-        			stmt = conn.prepareStatement(getNewDoctor);
-        			stmt.setInt(1, Integer.parseInt(newDocID.getText()));
-        			stmt.setString(2, newDocName.getText());	
-        			stmt.setString(3, newDocSpecialty.getText());
-        			stmt.setString(4, newDocShift.getText());		                 
-        			stmt.execute();
-        			
-        			h.addDoctor(new Doctor(Integer.parseInt(newDocID.getText()), newDocName.getText(), newDocSpecialty.getText(), newDocShift.getText()));
-        		}
-        		catch (SQLException e) {
-            		System.out.println("Error in creating new doctor.");
-            	}
-        		catch(NumberFormatException e){
-        			System.out.println("Error! Enter a valid integer ID");
-        		}
-                newDocID.clear();
-                newDocName.clear();
-                newDocSpecialty.clear();
-                newDocShift.clear();
-                
-                Doctor d = new Doctor();
-                Doctors.getItems().setAll(h.getDoctors());
+        		
+        		add(DOCTOR_URL, getNewDoctor, "Doctors", newDocID, newDocName, newDocSpecialty, newDocShift);
             }
         });
 		
 		addNewPat.setOnAction(new EventHandler<ActionEvent>() {//REQ # 8 use sql db to retrieve data
             @Override
             public void handle(ActionEvent event) {
-            	final String DB_URL = "jdbc:derby:Patient";
-            	Connection conn;
-        		PreparedStatement stmt;
-        		
-        		if(Integer.parseInt(newPatAge.getText()) < 0){
-        			System.out.println("Invalid age! Enter a positive number!");
+        		try{
+        			if(Integer.parseInt(newPatAge.getText()) < 0){
+            			System.out.println("Invalid age! Enter a positive number!");
+            			return;
+            		}
+        		}
+        		catch(NumberFormatException e){
+        			System.out.println("Invalid input: " + newPatAge.getText() + ". Please enter an integer!");
         			return;
         		}
         		
@@ -218,37 +196,7 @@ public class HospitalController implements Initializable {
         			return;
 				}
         		
-        		try {
-        			conn = DriverManager.getConnection(DB_URL);
-        			
-        			String getNewPatient = "INSERT INTO Patients (patientID, patientName, age, ailment) VALUES (?,?,?,?)";
-        			stmt = conn.prepareStatement(getNewPatient);
-        			stmt.setInt(1, Integer.parseInt(newPatID.getText()));
-        			stmt.setString(2, newPatName.getText());
-        			stmt.setInt(3, Integer.parseInt(newPatAge.getText()));
-        			stmt.setString(4, newPatAilment.getText());		                 
-        			stmt.execute();
-        			
-        			if(isOutpatient){
-        				h.addPatient(new Outpatient(Integer.parseInt(newPatID.getText()), newPatName.getText(), Integer.parseInt(newPatAge.getText()), newPatAilment.getText()));
-        			}
-        			else{
-        				h.addPatient(new Inpatient(Integer.parseInt(newPatID.getText()), newPatName.getText(), Integer.parseInt(newPatAge.getText()), newPatAilment.getText()));
-        			}
-        		}
-        		catch (SQLException e) {
-            		System.out.println("Error in creating new patient!");
-            	}
-        		catch(NumberFormatException e){
-        			System.out.println("Error! Enter a valid integer ID");
-        		}
-                newPatID.clear();
-                newPatName.clear();
-                newPatAge.clear();
-                newPatAilment.clear();
-                
-                
-                Patients.getItems().setAll(h.getPatients());
+        		add(PATIENT_URL, getNewPatient, "Patients", newPatID, newPatName, newPatAge, newPatAilment);
             }
         });
 		
@@ -263,112 +211,124 @@ public class HospitalController implements Initializable {
 		            	isOutpatient = false;
 		             }
 		         }
-
 		     } 
 		});
 		
 		delDoctorButton.setOnAction(new EventHandler<ActionEvent>() {//delete value from db, but leave in Hospital object for records
             @Override
             public void handle(ActionEvent event) {
-            	final String DB_URL = "jdbc:derby:Doctor";
-            	Connection conn;
-        		PreparedStatement stmt;
-        		
-        		String verifyDelete = "Are you sure you wish to delete the doctor with ID: ";
-        		StringBuilder sb = new StringBuilder(verifyDelete); //REQ #2 utilize StringBuilder (Would liked to have found a better utilization of this)
-        		sb.append(Integer.parseInt(delDoctor.getText()) + "?\n(Enter y/n)");
-        		System.out.println(sb);
-        		
-        		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        		String input = null;
-				try {
-					input = br.readLine();
-				} catch (IOException e) {
-					System.out.println("Error Reading Input");
-				}
-        		
-        		if(input.equalsIgnoreCase("Y")){
-        			try {
-        				conn = DriverManager.getConnection(DB_URL);
-        			
-        				String getNewDoctor = "DELETE FROM Doctors WHERE doctorID = ?";
-        				stmt = conn.prepareStatement(getNewDoctor);
-        				stmt.setInt(1, Integer.parseInt(delDoctor.getText()));		                 
-        				stmt.execute();
-        			}
-        			catch (SQLException e) {
-        				System.out.println("Error in deleting Doctor.");
-        			}
-        			catch(NumberFormatException e){
-        				System.out.println("Error! Enter a valid integer ID");
-        			}
-        			delDoctor.clear();
-        			Doctor d = new Doctor();
-        			Doctors.getItems().setAll(d.getDoctors());
-        		}
-        		else if(input.equalsIgnoreCase("N")){
-        			System.out.println("Delete Canceled");
-        			return;
-        		}
-        		else{
-        			System.out.println("Invalid input!");
-        			return;
-        		}
+            	delete(DOCTOR_URL, delDoctor, "Doctors", delNewDoctor);
             }
         });
 		
 		delPatientButton.setOnAction(new EventHandler<ActionEvent>() {//delete value from db, but leave in Hospital object for records
             @Override
             public void handle(ActionEvent event) {
-            	final String DB_URL = "jdbc:derby:Patient";
-            	Connection conn;
-        		PreparedStatement stmt;
-        		
-        		String verifyDelete = "Are you sure you wish to delete the patient with ID: ";
-        		StringBuilder sb = new StringBuilder(verifyDelete); //REQ #2 utilize StringBuilder (Would liked to have found a better utilization of this)
-        		sb.append(Integer.parseInt(delPatient.getText()) + "?\n(Enter y/n)");
-        		System.out.println(sb);
-        		
-        		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        		String input = null;
-				try {
-					input = br.readLine();
-				} catch (IOException e) {
-					System.out.println("Error Reading Input");
-				}
-        		
-				
-        		if(input.equalsIgnoreCase("Y")){
-        			try {
-        				conn = DriverManager.getConnection(DB_URL);
-        			
-        				String getNewDoctor = "DELETE FROM Patients WHERE patientID = ?";
-        				stmt = conn.prepareStatement(getNewDoctor);
-        				stmt.setInt(1, Integer.parseInt(delPatient.getText()));		                 
-        				stmt.execute();
-        			}
-        			catch (SQLException e) {
-        				System.out.println("Error in deleting patient.");
-        			}
-        			catch(NumberFormatException e){
-        				System.out.println("Error! Enter a valid integer ID");
-        			}
-        			delPatient.clear();
-        			Patient p = new Inpatient();// default to inpatient to access sql db
-        			Patients.getItems().setAll(p.getPatients());
-        		}
-        		else if(input.equalsIgnoreCase("N")){
-        			System.out.println("Delete Canceled");
-        			return;
-        		}
-        		else{
-        			System.out.println("Invalid input!");
-        			return;
-        		}
+            	delete(PATIENT_URL, delPatient, "Patients", delNewPatient);
             }
         });
 	}
+	public void delete(String db_url, TextField tfType, String type, String sql){
+    	Connection conn;
+		PreparedStatement stmt;
+		
+		String verifyDelete = "Are you sure you wish to delete the person with ID: ";
+		StringBuilder sb = new StringBuilder(verifyDelete); //REQ #2 utilize StringBuilder (Would liked to have found a better utilization of this)
+		sb.append(Integer.parseInt(tfType.getText()) + "?\n(Enter y/n)");
+		System.out.println(sb);
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String input = null;
+		try {
+			input = br.readLine();
+		} 
+		catch (IOException e) {
+			System.out.println("Error Reading Input");
+		}
+		
+		if(input.equalsIgnoreCase("Y")){
+			try {
+				conn = DriverManager.getConnection(db_url);
+				stmt = conn.prepareStatement(sql);
+				stmt.setInt(1, Integer.parseInt(tfType.getText()));		                 
+				stmt.execute();
+				
+				h.deletePatient(tfType.getText());
+			}
+			catch (SQLException e) {
+				System.out.println("Error in deleting patient.");
+			}
+			catch(NumberFormatException e){
+				System.out.println("Error! Enter a valid integer ID");
+			}
+			tfType.clear();
+			if(type.equals("Patients")){
+				Patients.getItems().setAll(h.getPatients());
+			}
+			else if(type.equals("Doctors")){
+				Doctors.getItems().setAll(h.getDoctors());
+			}
+			else{
+				System.out.println("Enter only 'Patients' or 'Doctors'");
+			}
+		}
+		else if(input.equalsIgnoreCase("N")){
+			System.out.println("Delete Canceled");
+			return;
+		}
+		else{
+			System.out.println("Invalid input!");
+			return;
+		}
+    }
 	
+	public void add(String db_url,String sql, String type, TextField id, TextField name, TextField op1, TextField op2){
+		Connection conn;
+		PreparedStatement stmt;
+		try {
+			conn = DriverManager.getConnection(db_url);
+			
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, Integer.parseInt(id.getText()));
+			stmt.setString(2, name.getText());
+			stmt.setInt(3, Integer.parseInt(op1.getText()));
+			stmt.setString(4, op2.getText());		                 
+			stmt.execute();
+			
+			if(type.equals("Patients")){
+				if(isOutpatient){
+					h.addPatient(new Outpatient(Integer.parseInt(id.getText()), name.getText(), Integer.parseInt(op1.getText()), op2.getText()));
+				}
+				else{
+					h.addPatient(new Inpatient(Integer.parseInt(id.getText()), name.getText(), Integer.parseInt(op1.getText()), op2.getText()));
+				}
+			}
+			else if(type.equals("Doctors")){
+				h.addDoctor(new Doctor(Integer.parseInt(id.getText()), name.getText(), op1.getText(), op2.getText()));
+			}
+		}
+		catch (SQLException e) {
+    		System.out.println("Error in creating new patient!");
+    	}
+		catch(NumberFormatException e){
+			System.out.println("Error! Enter a valid integer ID");
+		}
+        id.clear();
+        name.clear();
+        op1.clear();
+        op2.clear(); 
+        
+        if(type.equals("Patients")){
+			Patients.getItems().setAll(h.getPatients());
+		}
+		else if(type.equals("Doctors")){
+			Doctors.getItems().setAll(h.getDoctors());
+		}
+		else{
+			System.out.println("Enter only 'Patients' or 'Doctors'");
+		}
+        
+	}
 	public boolean verifySpecialty (String in) throws InvalidSpecialtyException{
 		String trimmed = in.trim();
 		for (Specialty s: Specialty.values()){

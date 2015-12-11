@@ -89,10 +89,6 @@ public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
 		this.specialty = new SimpleStringProperty(specialty);
 		this.shift = new SimpleStringProperty(shift);
 	}
-	
-	//public Doctor(int doctorID){
-	//	possibly utilize this to delete value from hospital object
-	//}
 		
 	public ObservableList<Doctor> getDoctors(){ //REQ # 8 use sql db to retrieve data
 		final String URL = "jdbc:derby:Doctor";
@@ -112,7 +108,6 @@ public class Doctor extends Hospital  { //REQ#6 extends implemented superclass
     				String doctorName = rs.getString(2);
     				String specialty = rs.getString(3);
     				String shift = rs.getString(4);
-    				
     				Doctor row = new Doctor(doctorID,doctorName,specialty,shift);
     				ll.add(row);
     			}

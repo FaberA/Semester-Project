@@ -1,6 +1,7 @@
 package edu.carrollcc.cis232.SemesterProject;
 
 import java.util.List;
+import java.util.ListIterator;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -75,10 +76,24 @@ public class Hospital { //REQ#5 define super class to be implemented by 2 sub cl
 	public void addPatient(Patient p){
 		patients.add(p);
 	}
-	public void deleteDoctor(Doctor d){
-		doctors.remove(d);
+	public void deleteDoctor(String doctorID){
+		String search = doctorID;
+		ListIterator<Doctor> iter = this.getDoctors().listIterator();
+		while(iter.hasNext()){
+			Doctor d = iter.next();
+			if(Integer.toString(d.getDoctorID())!= null && Integer.toString(d.getDoctorID()).contains(search)){
+				iter.remove();
+			}
+		}
 	}
-	public void deletePatient(Patient p){
-		patients.remove(p);
+	public void deletePatient(String patientID){
+		String search = patientID;
+		ListIterator<Patient> iter = this.getPatients().listIterator();
+		while(iter.hasNext()){
+			Patient p = iter.next();
+			if(Integer.toString(p.getPatientID())!= null && Integer.toString(p.getPatientID()).contains(search)){
+				iter.remove();
+			}
+		}
 	}
 }
